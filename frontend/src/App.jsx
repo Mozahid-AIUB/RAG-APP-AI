@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 
-const BACKEND_URL = 'http://localhost:8000';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
 
 function App() {
   const [messages, setMessages] = useState([
@@ -11,6 +11,25 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [fileStatus, setFileStatus] = useState(null);
   const chatEndRef = useRef(null);
+
+  const loopCaptions = [
+    "Ask anything about your data",
+    "Powered by RAG + DeepSeek",
+    "We find the relevant rows, then AI answers from them",
+    "Try: \"Summarize this data\"",
+    "Try: \"Top 5 by value\"",
+    "Try: \"Any unusual patterns?\"",
+    "Upload once, ask forever",
+    "No more scrolling through spreadsheets"
+  ];
+  const [loopIndex, setLoopIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLoopIndex(prev => (prev + 1) % loopCaptions.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   const scrollToBottom = () => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -61,15 +80,21 @@ function App() {
   return (
     <div className="app-container">
       <aside className="sidebar">
-        <div className="logo">Antigravity RAG</div>
-        
+        <div className="logo">MOZAHID Anti RAG</div>
+
+        <div className="orb-wrapper">
+          <div className={`orb ${isLoading ? 'orb-active' : ''}`}>
+            <div className="orb-core" />
+          </div>
+        </div>
+
         <div className="upload-section">
           <h3>Data Source</h3>
           <label className="file-input-label">
-            <input type="file" onChange={handleFileUpload} className="file-input" accept=".xlsx,.xls" />
+            <input type="file" onChange={handleFileUpload} className="file-input" accept=".xlsx,.xls,.csv" />
             <span style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📊</span>
-            <span>Upload Excel</span>
-            <small style={{ color: 'var(--text-dim)', marginTop: '0.5rem' }}>.xlsx, .xls</small>
+            <span>Upload File</span>
+            <small style={{ color: 'var(--text-dim)', marginTop: '0.5rem' }}>.xlsx, .xls, .csv</small>
           </label>
           
           {fileStatus && (
@@ -79,8 +104,12 @@ function App() {
           )}
         </div>
 
+        <div className="sidebar-loop">
+          <span key={loopIndex} className="sidebar-loop-text">{loopCaptions[loopIndex]}</span>
+        </div>
+
         <div style={{ marginTop: 'auto', padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '0.5rem' }}>
-          <p style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>Powered by Groq Llama 3 & FAISS</p>
+          <p style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>Powered by DeepSeek & FAISS</p>
         </div>
       </aside>
 
@@ -92,8 +121,10 @@ function App() {
             </div>
           ))}
           {isLoading && (
-            <div className="message ai" style={{ opacity: 0.7 }}>
-              Thinking...
+            <div className="message ai thinking-message">
+              <span className="thinking-dot" />
+              <span className="thinking-dot" />
+              <span className="thinking-dot" />
             </div>
           )}
           <div ref={chatEndRef} />

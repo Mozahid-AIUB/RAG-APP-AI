@@ -1,31 +1,29 @@
-# RAG IMPLEMENTATIONS 🚀
+# MOZAHID Anti RAG 🚀
 ## FIRST METHOD
-A premium Retrieval-Augmented Generation (RAG) application that allows you to upload Excel spreadsheets and ask questions about your data using the ultra-fast Groq API and FAISS vector database.
+A premium Retrieval-Augmented Generation (RAG) application that allows you to upload Excel or CSV files and ask questions about your data using DeepSeek (via OpenRouter) and the FAISS vector database.
 <img width="1644" height="919" alt="image" src="https://github.com/user-attachments/assets/b2fedb49-d037-407f-aedb-efff6697e3b8" />
 
 ## ✨ Features
-- **High-Speed Inference**: Powered by **Groq Llama 3.3-70b** for near-instant responses.
+- **High-Quality Inference**: Powered by **DeepSeek** (via OpenRouter) for accurate, context-aware answers.
 - **Local Vector Search**: Uses **FAISS** for efficient similarity search across your data.
-- **Excel Ingestion**: Converts complex spreadsheets into searchable context chunks.
-- **Glassmorphic UI**: A modern, vibrant React interface designed for premium user experience.
+- **Excel & CSV Ingestion**: Converts spreadsheets into searchable context chunks.
+- **Glassmorphic UI**: A modern, professional React interface.
 - **Data Privacy**: Local embedding generation ensures minimal data exposure.
 
 ## 🛠️ Tech Stack
 - **Backend**: [FastAPI](https://fastapi.tiangolo.com/), [LangChain](https://www.langchain.com/), [FAISS](https://github.com/facebookresearch/faiss), [Pandas](https://pandas.pydata.org/)
 - **Embeddings**: `all-MiniLM-L6-v2` (Sentence-Transformers)
-- **LLM**: [Groq](https://groq.com/) (Llama 3.3-70b-versatile)
+- **LLM**: [DeepSeek](https://www.deepseek.com/) via [OpenRouter](https://openrouter.ai/)
 - **Frontend**: [React](https://react.dev/), [Vite](https://vitejs.dev/), [Axios](https://axios-http.com/)
 
 ---
-# Prompt
-Make a basic RAG application which takes an excell file as upload and allows users to ask question from the file. the API key used must be of GROQ and vector data base should be of FAISS. use this API key :
 
 ## 🚀 Getting Started
 
 ### 1. Prerequisites
 - **Node.js**: v18+ 
 - **Python**: v3.10+
-- **Groq API Key**: Get it from [Groq Console](https://console.groq.com/)
+- **OpenRouter API Key**: Get it from [OpenRouter](https://openrouter.ai/keys)
 
 ### 2. Backend Setup
 1. Navigate to the `backend` folder:
@@ -36,9 +34,9 @@ Make a basic RAG application which takes an excell file as upload and allows use
    ```bash
    pip install -r requirements.txt
    ```
-3. Create a `.env` file and add your Groq key:
+3. Create a `.env` file and add your OpenRouter key:
    ```env
-   GROQ_API_KEY=your_groq_api_key_here
+   OPENROUTER_API_KEY=your_openrouter_api_key_here
    ```
 4. Start the server:
    ```bash
@@ -62,7 +60,7 @@ Make a basic RAG application which takes an excell file as upload and allows use
 ---
 
 ## 📖 How to Use
-1. **Upload**: Drop your `.xlsx` or `.xls` file into the upload zone in the sidebar.
+1. **Upload**: Drop your `.xlsx`, `.xls`, or `.csv` file into the upload zone in the sidebar.
 2. **Indexing**: The app will process your data and create a local vector index (FAISS).
 3. **Ask**: Once the status shows "Active", ask questions like:
    - *"What is the total revenue listed in the 'Sales' sheet?"*
@@ -72,10 +70,10 @@ Make a basic RAG application which takes an excell file as upload and allows use
 ---
 
 ## 🏗️ Architecture
-1. **Ingestion**: `Pandas` reads the Excel file. Each row is converted into a structured text document.
+1. **Ingestion**: `Pandas` reads the uploaded Excel/CSV file. Each row is converted into a structured text document.
 2. **Indexing**: `SentenceTransformers` generates 384-dimensional embeddings for each row.
 3. **Retrieval**: When a query is made, `FAISS` calculates cosine similarity to find the most relevant context.
-4. **Generation**: Relevant chunks are formatted into a prompt and sent to **Groq** for the final answer.
+4. **Generation**: Relevant chunks are formatted into a prompt and sent to **DeepSeek** for the final answer.
 
 ## SECOND METHOD 
 <img width="1631" height="952" alt="image" src="https://github.com/user-attachments/assets/f397f017-c5be-47f4-9977-b541f4f675e1" />

@@ -7,13 +7,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
-from langchain_groq import ChatGroq
+from langchain_openai import ChatOpenAI
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.docstore.document import Document
-from langchain.chains import RetrievalQA
-from langchain.prompts import PromptTemplate
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_core.documents import Document
+from langchain_classic.chains import RetrievalQA
+from langchain_core.prompts import PromptTemplate
 
 load_dotenv()
 
@@ -42,17 +42,17 @@ class QueryRequest(BaseModel):
 async def upload_excel(file: UploadFile = File(...)):
     global vector_store, qa_chain
     
-    if not file.filename.endswith(('.xlsx', '.xls')):
-        raise HTTPException(status_code=400, detail="Invalid file format. Please upload an Excel file.")
-    
+    if not file.filename.endswith(('.xlsx', '.xls', '.csv')):
+        raise HTTPException(status_code=400, detail="Invalid file format. Please upload an Excel or CSV file.")
+
     try:
         # Save uploaded file temporarily
         temp_file = f"temp_{file.filename}"
         with open(temp_file, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
-        
-        # Load Excel using pandas
-        df = pd.read_excel(temp_file)
+
+        # Load Excel or CSV using pandas
+        df = pd.read_csv(temp_file) if file.filename.endswith('.csv') else pd.read_excel(temp_file)
         os.remove(temp_file) # Clean up
         
         # Convert each row into a document
@@ -69,11 +69,12 @@ async def upload_excel(file: UploadFile = File(...)):
         # Create Vector Store
         vector_store = FAISS.from_documents(split_docs, embeddings)
         
-        # Initialize Groq LLM
-        llm = ChatGroq(
-            model="llama-3.3-70b-versatile",
+        # Initialize LLM via OpenRouter
+        llm = ChatOpenAI(
+            model="deepseek/deepseek-chat",
             temperature=0,
-            groq_api_key=os.getenv("GROQ_API_KEY")
+            api_key=os.getenv("OPENROUTER_API_KEY"),
+            base_url="https://openrouter.ai/api/v1",
         )
         
         # Create QA Chain
