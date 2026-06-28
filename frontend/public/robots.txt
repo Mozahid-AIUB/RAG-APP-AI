@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://anti-rag-frontend.onrender.com/sitemap.xml
